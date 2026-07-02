@@ -1,1 +1,3 @@
-print("Projeto Monitoramento de Mercado e Sentimento iniciado com sucesso!")
+from producer.price_producer import coletar_preco_bitcoin
+
+coletar_preco_bitcoin()
