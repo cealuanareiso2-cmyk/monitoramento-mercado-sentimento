@@ -1,0 +1,11 @@
+pandas
+requests
+python-dotenv
+sqlalchemy
+psycopg2-binary
+nltk
+vaderSentiment
+yfinance
+kafka-python
+fastapi
+uvicorn

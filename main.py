@@ -1,0 +1,1 @@
+print("Projeto Monitoramento de Mercado e Sentimento iniciado com sucesso!")
