@@ -1,10 +1,10 @@
-import requests
 from sqlalchemy import text
 
+from config import ATIVOS_MONITORADOS
 from database.connection import engine
 from sentiment.analyzer import analisar_sentimento
 from logger import logger
-from config import NEWS_API_KEY, NEWS_PAGE_SIZE, ATIVOS_MONITORADOS
+from producer.news_api import buscar_noticias
 
 
 def coletar_e_salvar_noticias():
@@ -12,23 +12,11 @@ def coletar_e_salvar_noticias():
     total_duplicadas = 0
 
     for termo_busca, ativo_codigo in ATIVOS_MONITORADOS.items():
-        url = (
-            "https://newsapi.org/v2/everything?"
-            f"q={termo_busca}&"
-            "language=pt&"
-            "sortBy=publishedAt&"
-            f"pageSize={NEWS_PAGE_SIZE}&"
-            f"apiKey={NEWS_API_KEY}"
-        )
+        noticias, status_code, erro = buscar_noticias(termo_busca)
 
-        response = requests.get(url)
-
-        if response.status_code != 200:
-            logger.error(f"Erro na NewsAPI para {termo_busca}: {response.status_code} - {response.text}")
+        if erro:
+            logger.error(f"Erro na NewsAPI para {termo_busca}: {status_code} - {erro}")
             continue
-
-        dados = response.json()
-        noticias = dados.get("articles", [])
 
         inseridas = 0
         duplicadas = 0
