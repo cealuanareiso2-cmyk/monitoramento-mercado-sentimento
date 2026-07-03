@@ -27,9 +27,14 @@ NEWS_LANGUAGE = "pt"
 
 NEWS_PAGE_SIZE = 10
 
-# ==========================
-# ATIVOS
-# ==========================
+
+ATIVOS_MONITORADOS = {
+    "bitcoin": "BTC",
+    "ethereum": "ETH",
+    "nvidia": "NVDA",
+    "tesla": "TSLA"
+}
+
 
 CRIPTO_ATIVOS = [
     "bitcoin",
