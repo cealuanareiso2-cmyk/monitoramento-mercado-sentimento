@@ -1,3 +1,3 @@
-from producer.price_producer import coletar_preco_bitcoin
+from producer.coletor_news import coletar_e_salvar_noticias
 
-coletar_preco_bitcoin()
+coletar_e_salvar_noticias()
