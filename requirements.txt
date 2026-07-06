@@ -9,3 +9,4 @@ yfinance
 kafka-python
 fastapi
 uvicorn
+pip freeze 
