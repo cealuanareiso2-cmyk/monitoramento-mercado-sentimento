@@ -1,3 +1,3 @@
-from producer.coletor_news import coletar_e_salvar_noticias
+from producer.coletor_news import coletar_e_enviar_noticias_para_kafka
 
-coletar_e_salvar_noticias()
+coletar_e_enviar_noticias_para_kafka()
