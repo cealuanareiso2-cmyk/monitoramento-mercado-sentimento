@@ -1,92 +1,44 @@
 import yfinance as yf
-from sqlalchemy import text
-from database.connection import engine
+from logger import logger
+from producer.price_kafka_producer import enviar_preco
 
 
-def coletar_preco_bitcoin():
+ATIVOS_YFINANCE = {
+    "BTC": "BTC-USD",
+    "ETH": "ETH-USD",
+    "NVDA": "NVDA",
+    "TSLA": "TSLA"
+}
 
-    ticker = yf.Ticker("BTC-USD")
 
-    dados = ticker.history(
-        period="1d",
-        interval="1m"
-    )
+def coletar_e_enviar_precos_para_kafka():
+    total_enviados = 0
 
-    if dados.empty:
-        print("Nenhum dado encontrado.")
-        return
+    for ativo_codigo, ticker_codigo in ATIVOS_YFINANCE.items():
+        ticker = yf.Ticker(ticker_codigo)
+        dados = ticker.history(period="1d", interval="1m")
 
-    ultimo = dados.tail(1)
+        if dados.empty:
+            logger.warning(f"Nenhum preço encontrado para {ativo_codigo}")
+            continue
 
-    abertura = float(ultimo["Open"].iloc[0])
-    maxima = float(ultimo["High"].iloc[0])
-    minima = float(ultimo["Low"].iloc[0])
-    fechamento = float(ultimo["Close"].iloc[0])
+        ultimo = dados.tail(1)
 
-    volume = float(ultimo["Volume"].iloc[0])
-
-    data_preco = ultimo.index[0].to_pydatetime()
-
-    query = text("""
-        INSERT INTO precos_ativos (
-            ativo,
-            preco,
-            moeda,
-            volume,
-            variacao_percentual,
-            data_preco,
-            abertura,
-            maxima,
-            minima,
-            fechamento
-        )
-
-        VALUES (
-
-            :ativo,
-            :preco,
-            :moeda,
-            :volume,
-            :variacao,
-            :data_preco,
-            :abertura,
-            :maxima,
-            :minima,
-            :fechamento
-
-        )
-    """)
-
-    with engine.begin() as connection:
-
-        connection.execute(query, {
-
-            "ativo": "BTC",
-
-            "preco": fechamento,
-
+        mensagem = {
+            "ativo": ativo_codigo,
+            "preco": float(ultimo["Close"].iloc[0]),
             "moeda": "USD",
+            "volume": float(ultimo["Volume"].iloc[0]),
+            "abertura": float(ultimo["Open"].iloc[0]),
+            "maxima": float(ultimo["High"].iloc[0]),
+            "minima": float(ultimo["Low"].iloc[0]),
+            "fechamento": float(ultimo["Close"].iloc[0]),
+            "data_preco": ultimo.index[0].to_pydatetime().isoformat()
+        }
 
-            "volume": volume,
+        enviar_preco(mensagem)
+        total_enviados += 1
 
-            "variacao": 0,
+        logger.info(f"{ativo_codigo}: preço enviado para Kafka.")
 
-            "data_preco": data_preco,
-
-            "abertura": abertura,
-
-            "maxima": maxima,
-
-            "minima": minima,
-
-            "fechamento": fechamento
-
-        })
-
-    print("\nPreço salvo com sucesso!\n")
-
-    print(f"Abertura   : {abertura}")
-    print(f"Máxima     : {maxima}")
-    print(f"Mínima     : {minima}")
-    print(f"Fechamento : {fechamento}")
-    print(f"Volume     : {volume}")
+    logger.info(f"Coleta de preços finalizada. Total enviado: {total_enviados}.")

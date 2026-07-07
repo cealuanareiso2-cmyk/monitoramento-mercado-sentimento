@@ -1,3 +1,3 @@
-from producer.coletor_news import coletar_e_enviar_noticias_para_kafka
+from producer.price_producer import coletar_e_enviar_precos_para_kafka
 
-coletar_e_enviar_noticias_para_kafka()
+coletar_e_enviar_precos_para_kafka()
