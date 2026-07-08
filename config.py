@@ -20,13 +20,36 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 
 # ==========================
+# KAFKA
+# ==========================
+
+KAFKA_SERVER = os.getenv("KAFKA_SERVER")
+
+TOPIC_NEWS = os.getenv("TOPIC_NEWS")
+TOPIC_PRICE = os.getenv("TOPIC_PRICE")
+
+# ==========================
+# SCHEDULER
+# ==========================
+
+INTERVALO_MINUTOS = int(os.getenv("INTERVALO_MINUTOS", 1))
+
+# ==========================
+# YAHOO FINANCE
+# ==========================
+
+YFINANCE_INTERVAL = os.getenv("YFINANCE_INTERVAL", "1m")
+
+# ==========================
 # NEWS API
 # ==========================
 
 NEWS_LANGUAGE = "pt"
-
 NEWS_PAGE_SIZE = 10
 
+# ==========================
+# ATIVOS
+# ==========================
 
 ATIVOS_MONITORADOS = {
     "bitcoin": "BTC",
@@ -34,7 +57,6 @@ ATIVOS_MONITORADOS = {
     "nvidia": "NVDA",
     "tesla": "TSLA"
 }
-
 
 CRIPTO_ATIVOS = [
     "bitcoin",
